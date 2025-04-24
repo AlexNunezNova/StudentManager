@@ -50,8 +50,10 @@ class Student(Person):
 
     def withdraw_from_course(self, course_id: str):
         """Withdraw student from a course"""
-        self.enrolled_courses.discard(course_id)
-        #TODO change here to make same logic as with teacher (error handling)
+        try:
+            self.enrolled_courses.remove(course_id)
+        except KeyError:
+            raise KeyError("Course not found for this student. Please try again")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert student data to dictionary"""
