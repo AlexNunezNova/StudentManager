@@ -3,5 +3,4 @@
 .env
 university_test.py
 teacher_test.py
-test.py
 course_test.py

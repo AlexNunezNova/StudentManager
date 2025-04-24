@@ -119,7 +119,7 @@ class Teacher(Person):
         #add variables to contact info
         teacher_dict.update(
             {"specializations": self.specializations,
-            "assigned courses": list(self.assigned_courses)
+            "assigned_courses": list(self.assigned_courses)
              }
         )
         return teacher_dict

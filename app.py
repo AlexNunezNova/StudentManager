@@ -90,21 +90,21 @@ def handle_courses():
     if request.method == 'POST':
         data = request.get_json()
         try:
-            course_type = data["course type"]
+            course_type = data["type"]
             if course_type == "math":
                 course = Course(
                     # id and enrollment are generated internally, not in POST method
                     name = data["name"],
                     course_type= course_type,
-                    max_capacity= data["max capacity"],
-                    difficulty_level= data["difficulty level"]
+                    max_capacity= data["max_capacity"],
+                    difficulty_level= data["difficulty_level"]
                 )
             elif course_type == "art":
                 course = Course(
                     name=data["name"],
                     course_type=course_type,
-                    max_capacity=data["max capacity"],
-                    materials_required=data["materials required"]
+                    max_capacity=data["max_capacity"],
+                    materials_required=data["materials_required"]
                 )
 
             course_id = university.add_course(course)
@@ -128,16 +128,34 @@ def handle_enrollment(course_id, student_id):
     # For DELETE:
     # 1. Try to withdraw student from course
     # 2. Return success/failure message
-    pass
+    # POST method
+    if request.method == 'POST':
+        try:
+            university.enroll_student(student_id, course_id)
+            return jsonify({'message':"Enrollment successful"}), 201
+        except (KeyError, ValueError, TypeError) as e:
+            return jsonify({"error": str(e)}), 400
+    # DELETE method
+    elif request.method == 'DELETE':
+        try:
+            university.withdraw_student(student_id, course_id)
+            return jsonify({'message': "Withdrawal successful"}), 201
+        except (KeyError, ValueError, TypeError) as e:
+            return jsonify({"error": str(e)}), 400
 
-# Course assignment endpoints
+# Course assignment endpoint
 @app.route('/courses/<course_id>/teacher/<teacher_id>', methods=['POST'])
 def assign_teacher_to_course(course_id, teacher_id):
     """Assign a teacher to a course"""
     # TODO: Implement assign_teacher_to_course endpoint
     # 1. Try to assign teacher to course
     # 2. Return success/failure message
-    pass
+    if request.method =='POST':
+        try:
+            university.assign_teacher(teacher_id, course_id)
+            return jsonify({'message': "Assignment successful"}), 201
+        except (KeyError, ValueError, TypeError) as e:
+            return jsonify({"error": str(e)}), 400
 
 # Attendance endpoints
 @app.route('/courses/<course_id>/attendance', methods=['POST'])
@@ -147,7 +165,15 @@ def record_attendance(course_id):
     # 1. Get JSON data with date and present students
     # 2. Try to record attendance
     # 3. Return success/failure message
-    pass
+    if request.method =='POST':
+        data = request.get_json()
+        try:
+            date = data['date']
+            present_student_ids = set(data['present_student_ids'])
+            university.record_attendance(course_id,date,present_student_ids)
+            return jsonify({'message': "Record successful"}), 201
+        except (KeyError, ValueError, TypeError) as e:
+            return jsonify({"error": str(e)}), 400
 
 # Grade endpoints
 @app.route('/courses/<course_id>/grades/<student_id>', methods=['POST'])
@@ -157,7 +183,14 @@ def assign_grade(course_id, student_id):
     # 1. Get JSON data with grade
     # 2. Try to assign grade
     # 3. Return success/failure message
-    pass
+    if request.method =='POST':
+        data = request.get_json()
+        try:
+            grade= float(data['grade'])
+            university.assign_grade(course_id,student_id, grade)
+            return jsonify({'message': "Grade assignation successful"}), 201
+        except (KeyError, ValueError, TypeError) as e:
+            return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)

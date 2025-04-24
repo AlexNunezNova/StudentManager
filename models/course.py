@@ -98,20 +98,20 @@ class Course:
         course_info.update(
             {"id": self.id,
              "name": self.name,
-             "course type": self.course_type,
-             "max capacity": self.max_capacity,
+             "type": self.course_type,
+             "max_capacity": self.max_capacity,
              "enrollment": list(self.students), #transformed into list to be JSON serializable
              "teacher id": self.teacher_id
              }
         )
         if self.course_type == "math":
             course_info.update(
-                {"difficulty level": self.difficulty_level
+                {"difficulty_level": self.difficulty_level
                 }
             )
         elif self.course_type == "art":
             course_info.update(
-                {"materials required": list(self.materials_required)
+                {"materials_required": list(self.materials_required)
                 }
             )
         return course_info
